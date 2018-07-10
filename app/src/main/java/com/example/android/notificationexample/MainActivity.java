@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendToLogin() {
-        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent loginIntent = new Intent(MainActivity.this, SelectActivity.class);
         startActivity(loginIntent);
         finish();
     }
@@ -71,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
         };
         mAuth.addAuthStateListener(mAuthListener);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        /*FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             sendToLogin();
-        }
+        }*/
 
         mMainPager.setOffscreenPageLimit(2);
         mPagerViewAdapter = new PagerViewAdapter(getSupportFragmentManager());

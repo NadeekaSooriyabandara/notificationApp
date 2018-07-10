@@ -65,7 +65,9 @@ public class RegisterActivity extends AppCompatActivity {
         mLoginPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                //finish();
             }
         });
         mStorage = FirebaseStorage.getInstance().getReference().child("images");

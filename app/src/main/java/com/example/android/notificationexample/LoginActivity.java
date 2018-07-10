@@ -18,6 +18,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
 
+    private DatabaseReference mdb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +55,12 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
+        mdb = FirebaseDatabase.getInstance().getReference();
 
         mRegPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent regIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                Intent regIntent = new Intent(LoginActivity.this, SelectActivity.class);
                 startActivity(regIntent);
             }
         });
@@ -86,11 +91,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                         mProgressBar.setVisibility(View.INVISIBLE);
+                                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(mainIntent);
-                                        finish();
 
                                     }
                                 });
+
+                                // TODO update token
 
                             } else {
                                 Toast.makeText(LoginActivity.this, "Error : " + task.getException().getMessage(), Toast.LENGTH_LONG).show();

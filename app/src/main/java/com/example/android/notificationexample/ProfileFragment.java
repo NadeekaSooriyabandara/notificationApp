@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,6 +48,8 @@ public class ProfileFragment extends Fragment {
 
     private String mUserId;
 
+    private DatabaseReference mdb;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -59,7 +63,7 @@ public class ProfileFragment extends Fragment {
         mLogoutBtn = view.findViewById(R.id.logout_btn);
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
-
+        mdb = FirebaseDatabase.getInstance().getReference();
 
         mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -105,6 +109,7 @@ public class ProfileFragment extends Fragment {
                         Toast.makeText(container.getContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
+
 
 
             }
