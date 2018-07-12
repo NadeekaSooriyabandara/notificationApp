@@ -55,6 +55,10 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFireStore;
 
+    private String faculty;
+    private String ID, position;
+    private String department;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +77,13 @@ public class RegisterActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference().child("images");
         mAuth = FirebaseAuth.getInstance();
         mFireStore = FirebaseFirestore.getInstance();
+
+        faculty = getIntent().getStringExtra("faculty");
+        ID = getIntent().getStringExtra("ID");
+        position = getIntent().getStringExtra("position");
+        if (position.equals("head")) {
+            department = getIntent().getStringExtra("department");
+        }
 
         mImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +129,12 @@ public class RegisterActivity extends AppCompatActivity {
                                                 userMap.put("name", name);
                                                 userMap.put("image", download_url);
                                                 userMap.put("token_id", token_id);
+                                                userMap.put("position", position);
+                                                userMap.put("faculty", faculty);
+                                                userMap.put("ID", ID);
+                                                if (position.equals("head")) {
+                                                    userMap.put("department", department);
+                                                }
 
                                                 mFireStore.collection("Users").document(user_id).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
@@ -128,7 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(RegisterActivity.this, "Error : "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(), "Error : "+ e.getMessage(), Toast.LENGTH_SHORT).show();
                                                         mRegisterProgressBar.setVisibility(View.INVISIBLE);
                                                     }
                                                 });
@@ -156,8 +173,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void sendToMain() {
         Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
-        finish();
     }
 
     @Override

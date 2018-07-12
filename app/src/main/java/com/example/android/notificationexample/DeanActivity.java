@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,6 +17,7 @@ public class DeanActivity extends AppCompatActivity {
     private DatabaseReference mdb;
 
     private Spinner deanfaculty;
+    private EditText ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class DeanActivity extends AppCompatActivity {
 
         deanfaculty = (Spinner) findViewById(R.id.dean_faculty);
         mdb = FirebaseDatabase.getInstance().getReference();
+        ID = (EditText) findViewById(R.id.dean_id);
     }
 
     public void deannextclicked(View view) {
@@ -34,6 +37,9 @@ public class DeanActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Intent intent = new Intent(DeanActivity.this, RegisterActivity.class);
+                intent.putExtra("faculty", deanfaculty.getSelectedItem().toString().trim());
+                intent.putExtra("ID", ID.getText().toString().trim());
+                intent.putExtra("position", "dean");
                 startActivity(intent);
             }
         });

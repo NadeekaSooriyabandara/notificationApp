@@ -1,13 +1,17 @@
 package com.example.android.notificationexample;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,6 +23,7 @@ import java.util.Arrays;
 public class HeadActivity extends AppCompatActivity implements android.widget.AdapterView.OnItemSelectedListener{
 
     private DatabaseReference mdb;
+    private EditText ID;
 
     private Spinner headfaculty, headdepartment;
     private ArrayList<String> listApplied = new ArrayList<String>(Arrays.asList("Boteny", "Chemistry",
@@ -32,6 +37,7 @@ public class HeadActivity extends AppCompatActivity implements android.widget.Ad
         setContentView(R.layout.activity_head);
 
         mdb = FirebaseDatabase.getInstance().getReference();
+        ID = (EditText) findViewById(R.id.head_id);
 
         headfaculty = (Spinner) findViewById(R.id.head_faculty);
         headdepartment = (Spinner) findViewById(R.id.head_department);
@@ -39,8 +45,12 @@ public class HeadActivity extends AppCompatActivity implements android.widget.Ad
     }
 
     private void addListenerOnSpinnerItemSelection() {
-        //headfaculty = (Spinner) findViewById(R.id.spinner_faculty);
         headfaculty.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     public void headnextclicked(View view) {
@@ -51,7 +61,16 @@ public class HeadActivity extends AppCompatActivity implements android.widget.Ad
             @Override
             public void onSuccess(Void aVoid) {
                 Intent intent = new Intent(HeadActivity.this, RegisterActivity.class);
+                intent.putExtra("faculty", headfaculty.getSelectedItem().toString().trim());
+                intent.putExtra("department", headdepartment.getSelectedItem().toString().trim());
+                intent.putExtra("ID", ID.getText().toString().trim());
+                intent.putExtra("position", "head");
                 startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), e.getMessage().toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
