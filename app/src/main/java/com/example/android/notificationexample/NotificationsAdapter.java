@@ -1,6 +1,7 @@
 package com.example.android.notificationexample;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,8 +47,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         String from_id = mNotifList.get(position).getFrom();
 
         holder.mNotifMessage.setText(mNotifList.get(position).getMessage());
-
-        firebaseFirestore.collection("Users").document(from_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        holder.mNotifName.setText(mNotifList.get(position).getFrom());
+        holder.mNotifStatus.setText(mNotifList.get(position).getStatus());
+        if (mNotifList.get(position).getStatus().equals("rejected")) {
+            holder.mNotifStatus.setTextColor(Color.RED);
+        } else {
+            holder.mNotifStatus.setTextColor(Color.BLUE);
+        }
+        /*firebaseFirestore.collection("Users").document(from_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -62,7 +69,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 Glide.with(context).setDefaultRequestOptions(requestOptions).load(image).into(holder.mNotifImage);
 
             }
-        });
+        });*/
 
     }
 
@@ -75,7 +82,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         private View mView;
         private CircleImageView mNotifImage;
-        private TextView mNotifName, mNotifMessage;
+        private TextView mNotifName, mNotifMessage, mNotifDate, mNotifStatus;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -83,7 +90,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             mView = itemView;
             mNotifImage = mView.findViewById(R.id.notif_list_image);
             mNotifName = mView.findViewById(R.id.notif_list_name);
-            mNotifMessage = mView.findViewById(R.id.notif_list_message);
+            mNotifDate = mView.findViewById(R.id.notif_list_date);
+            mNotifMessage = mView.findViewById(R.id.notif_list_reason);
+            mNotifStatus = mView.findViewById(R.id.notif_list_status);
 
         }
     }

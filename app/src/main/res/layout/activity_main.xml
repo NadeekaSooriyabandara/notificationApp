@@ -31,7 +31,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/nunito_semibold"
             android:padding="15dp"
-            android:text="Users"
+            android:text="Notifications"
             android:textColor="@color/textTabLight"
             android:textSize="18sp" />
 
@@ -42,7 +42,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/nunito_semibold"
             android:padding="15dp"
-            android:text="Notifications"
+            android:text="History"
             android:textColor="@color/textTabLight"
             android:textSize="18sp" />
     </LinearLayout>

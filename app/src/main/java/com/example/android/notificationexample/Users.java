@@ -2,29 +2,29 @@ package com.example.android.notificationexample;
 
 public class Users extends UserId{
 
-    String name, image;
+    String fromuserid, message, vehicles, date, reason;
 
     public Users() {
     }
 
-    public Users(String name, String image) {
-        this.name = name;
-        this.image = image;
+    public Users(String fromuserid, String message) {
+        this.fromuserid = fromuserid;
+        this.message = message;
     }
 
     public String getName() {
-        return name;
+        return fromuserid;
     }
 
     public String getImage() {
-        return image;
+        return message;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String fromuserid) {
+        this.fromuserid = fromuserid;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage(String message) {
+        this.message = message;
     }
 }

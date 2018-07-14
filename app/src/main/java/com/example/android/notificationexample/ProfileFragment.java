@@ -19,8 +19,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class ProfileFragment extends Fragment {
 
-    private Button mLogoutBtn;
+    private Button mLogoutBtn, mEditBtn;
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
     private CircleImageView mProfileImage;
@@ -61,6 +64,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         mLogoutBtn = view.findViewById(R.id.logout_btn);
+        mEditBtn = view.findViewById(R.id.editprofile_button);
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
         mdb = FirebaseDatabase.getInstance().getReference();
@@ -90,7 +94,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mProgressBar.setVisibility(View.VISIBLE);
-                Map<String, Object> tokenMapRemove = new HashMap<>();
+                /*Map<String, Object> tokenMapRemove = new HashMap<>();
                 tokenMapRemove.put("token_id", FieldValue.delete());
                 mFirestore.collection("Users").document(mUserId).update(tokenMapRemove).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -98,8 +102,8 @@ public class ProfileFragment extends Fragment {
 
                         mAuth.signOut();
                         mProgressBar.setVisibility(View.INVISIBLE);
-                        /*Intent loginIntent = new Intent(container.getContext(), LoginActivity.class);
-                        startActivity(loginIntent);*/
+                        *//*Intent loginIntent = new Intent(container.getContext(), LoginActivity.class);
+                        startActivity(loginIntent);*//*
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -108,9 +112,49 @@ public class ProfileFragment extends Fragment {
                         mProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(container.getContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+                });*/
+
+                String current_id = mAuth.getCurrentUser().getUid();
+                final String[] position = new String[1];
+                final String[] faculty = new String[1];
+                final String[] ID = new String[1];
+                final String[] department = new String[1];
+                mFirestore.collection("Users").document(current_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        position[0] = (String) documentSnapshot.get("position");
+                        faculty[0] = (String) documentSnapshot.get("faculty");
+                        ID[0] = (String) documentSnapshot.get("ID");
+                        department[0] = (String) documentSnapshot.get("department");
+
+                        if (position[0].equals("head")) {
+                            mdb.child("faculty").child(faculty[0]).child(department[0]).child("token").setValue("").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mAuth.signOut();
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                }
+                            });
+
+                        } else {
+                            mdb.child("faculty").child(faculty[0]).child("token").setValue("").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mAuth.signOut();
+                                    mProgressBar.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                        }
+
+                    }
                 });
 
+            }
+        });
 
+        mEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
             }
         });

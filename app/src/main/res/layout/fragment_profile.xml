@@ -12,6 +12,16 @@
         android:background="@drawable/fragment_background"
         android:padding="20dp">
 
+        <ProgressBar
+            android:id="@+id/profile_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:indeterminate="true"
+            android:visibility="invisible"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="wrap_content"
@@ -34,6 +44,17 @@
             android:textSize="18sp" />
 
         <Button
+            android:layout_below="@+id/profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="edit profile"
+            android:id="@+id/editprofile_button"
+            android:textAllCaps="false"
+            android:background="@drawable/primary_color_btn"
+            android:layout_marginTop="20dp"/>
+
+        <Button
             android:id="@+id/logout_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,16 +66,6 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
-
-        <ProgressBar
-            android:id="@+id/profile_progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:indeterminate="true"
-            android:visibility="invisible"/>
 
     </RelativeLayout>
 
