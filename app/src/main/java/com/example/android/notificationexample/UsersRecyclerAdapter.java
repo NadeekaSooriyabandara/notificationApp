@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -20,10 +24,12 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
 
     private List<Users> usersList;
     private Context context;
+    private DatabaseReference db;
 
-    public UsersRecyclerAdapter(Context context, List<Users> usersList) {
+    public UsersRecyclerAdapter(Context context, List<Users> usersList, DatabaseReference db) {
         this.usersList = usersList;
         this.context = context;
+        this.db = db;
     }
 
     @NonNull
@@ -41,12 +47,49 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         //CircleImageView user_image_view = holder.user_image_view;
         //Glide.with(context).load(usersList.get(position).getImage()).into(user_image_view);
 
-        String user_id = usersList.get(position).userId;
+        final String user_id = usersList.get(position).userId;
         String user_name = usersList.get(position).getName();
         String message = usersList.get(position).getImage();
+        String date = usersList.get(position).getDate();
 
         holder.user_name_view.setText(user_name);
         holder.reason_view.setText(message);
+        holder.date_view.setText(date);
+
+        holder.confirm_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.child("UserIdentities").child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String indexNo = (String) dataSnapshot.getValue();
+                        db.child("Users").child(indexNo).child("notifications").child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String token = (String) dataSnapshot.getValue();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        holder.reject_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         /*holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

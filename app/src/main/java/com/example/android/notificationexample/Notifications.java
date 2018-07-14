@@ -8,10 +8,20 @@ public class Notifications extends UserId{
 
     }
 
-    public Notifications(String fromuserid, String message, String status) {
+    public Notifications(String fromuserid, String message, String status, String date) {
         this.fromuserid = fromuserid;
         this.message = message;
         this.status = status;
+        this.date  =date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDate() {
+
+        return date;
     }
 
     public void setStatus(String status) {

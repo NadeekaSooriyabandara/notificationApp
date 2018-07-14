@@ -60,7 +60,7 @@ public class UsersFragment extends Fragment {
         mUsersListView = view.findViewById(R.id.users_list);
 
         usersList = new ArrayList<>();
-        usersRecyclerAdapter = new UsersRecyclerAdapter(container.getContext(), usersList);
+        usersRecyclerAdapter = new UsersRecyclerAdapter(container.getContext(), usersList, mdb);
 
         mUsersListView.setHasFixedSize(true);
         mUsersListView.setLayoutManager(new LinearLayoutManager(container.getContext()));

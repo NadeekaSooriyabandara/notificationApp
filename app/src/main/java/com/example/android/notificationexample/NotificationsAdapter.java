@@ -49,6 +49,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         holder.mNotifMessage.setText(mNotifList.get(position).getMessage());
         holder.mNotifName.setText(mNotifList.get(position).getFrom());
         holder.mNotifStatus.setText(mNotifList.get(position).getStatus());
+        holder.mNotifDate.setText(mNotifList.get(position).getDate());
         if (mNotifList.get(position).getStatus().equals("rejected")) {
             holder.mNotifStatus.setTextColor(Color.RED);
         } else {

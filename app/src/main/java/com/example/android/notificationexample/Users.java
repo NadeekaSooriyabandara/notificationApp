@@ -7,9 +7,20 @@ public class Users extends UserId{
     public Users() {
     }
 
-    public Users(String fromuserid, String message) {
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDate() {
+
+        return date;
+    }
+
+    public Users(String fromuserid, String message, String date) {
         this.fromuserid = fromuserid;
         this.message = message;
+        this.date  =date;
+
     }
 
     public String getName() {
