@@ -85,6 +85,15 @@ public class NotificationsFragment extends Fragment {
                     }
                 });*/
 
+
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         mNotifList.clear();
 
         String current_id = mAuth.getCurrentUser().getUid();
@@ -101,10 +110,11 @@ public class NotificationsFragment extends Fragment {
                 department[0] = (String) documentSnapshot.get("department");
 
                 if (position[0].equals("head")) {
-                    mdb.child("faculty").child(faculty[0]).child(department[0]).child("notifications").orderByChild("respond").equalTo("true")
+                    mdb.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").orderByChild("respond").equalTo("true")
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+                                    mNotifList.clear();
                                     for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                                         //String name = (String) messageSnapshot.child("name").getValue();
                                         //String message = (String) messageSnapshot.child("message").getValue();
@@ -123,10 +133,11 @@ public class NotificationsFragment extends Fragment {
                                 }
                             });
                 } else {
-                    mdb.child("faculty").child(faculty[0]).child("notifications").orderByChild("respond").equalTo("true")
+                    mdb.child("faculty").child(faculty[0]).child("head").child("respondnotifications").orderByChild("respond").equalTo("true")
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+                                    mNotifList.clear();
                                     for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                                         //String name = (String) messageSnapshot.child("name").getValue();
                                         //String message = (String) messageSnapshot.child("message").getValue();
@@ -148,8 +159,5 @@ public class NotificationsFragment extends Fragment {
 
             }
         });
-
-        return view;
     }
-
 }

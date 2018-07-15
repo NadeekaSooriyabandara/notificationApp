@@ -11,12 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,11 +31,15 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     private List<Users> usersList;
     private Context context;
     private DatabaseReference db;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore mFirestore;
 
-    public UsersRecyclerAdapter(Context context, List<Users> usersList, DatabaseReference db) {
+    public UsersRecyclerAdapter(Context context, List<Users> usersList, DatabaseReference db, FirebaseAuth auth, FirebaseFirestore firebaseFirestore) {
         this.usersList = usersList;
         this.context = context;
         this.db = db;
+        this.mAuth = auth;
+        this.mFirestore = firebaseFirestore;
     }
 
     @NonNull
@@ -41,16 +51,17 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         //holder.user_name_view.setText(usersList.get(position).getName());
 
         //CircleImageView user_image_view = holder.user_image_view;
         //Glide.with(context).load(usersList.get(position).getImage()).into(user_image_view);
 
-        final String user_id = usersList.get(position).userId;
+        final String user_id = usersList.get(position).getName();
         String user_name = usersList.get(position).getName();
-        String message = usersList.get(position).getImage();
-        String date = usersList.get(position).getDate();
+        final String message = usersList.get(position).getImage();
+        final String date = usersList.get(position).getDate();
+        final String key = usersList.get(position).userId;
 
         holder.user_name_view.setText(user_name);
         holder.reason_view.setText(message);
@@ -59,19 +70,64 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         holder.confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 db.child("UserIdentities").child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String indexNo = (String) dataSnapshot.getValue();
-                        db.child("Users").child(indexNo).child("notifications").child("token").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                String token = (String) dataSnapshot.getValue();
-                            }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
+                        DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
+                        final Map notification = new HashMap<>();
 
+                        notification.put("fromuserid", usersList.get(position).getName());
+                        notification.put("message", message);
+                        notification.put("date", date);
+                        notification.put("stime", usersList.get(position).getStime());
+                        notification.put("etime", usersList.get(position).getEtime());
+                        notification.put("respond", "true");
+                        notification.put("passengers", usersList.get(position).getPassengers());
+                        notification.put("status", "confirmed");
+
+
+                        ref.push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                String current_id = mAuth.getCurrentUser().getUid();
+                                final String[] position = new String[1];
+                                final String[] faculty = new String[1];
+                                final String[] ID = new String[1];
+                                final String[] department = new String[1];
+                                mFirestore.collection("Users").document(current_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        position[0] = (String) documentSnapshot.get("position");
+                                        faculty[0] = (String) documentSnapshot.get("faculty");
+                                        ID[0] = (String) documentSnapshot.get("ID");
+                                        department[0] = (String) documentSnapshot.get("department");
+
+                                        if (position[0].equals("head")) {
+                                            db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").push().setValue(notification);
+                                                    usersList.remove(position);
+                                                    notifyDataSetChanged();
+                                                }
+                                            });
+
+                                        } else {
+                                            db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").push().setValue(notification);
+                                                    usersList.remove(position);
+                                                    notifyDataSetChanged();
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                });
                             }
                         });
                     }
@@ -87,7 +143,72 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         holder.reject_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                db.child("UserIdentities").child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String indexNo = (String) dataSnapshot.getValue();
 
+                        DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
+                        final Map notification = new HashMap<>();
+
+                        notification.put("fromuserid", usersList.get(position).getName());
+                        notification.put("message", message);
+                        notification.put("date", date);
+                        notification.put("stime", usersList.get(position).getStime());
+                        notification.put("etime", usersList.get(position).getEtime());
+                        notification.put("respond", "true");
+                        notification.put("passengers", usersList.get(position).getPassengers());
+                        notification.put("status", "rejected");
+
+
+                        ref.push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                String current_id = mAuth.getCurrentUser().getUid();
+                                final String[] position = new String[1];
+                                final String[] faculty = new String[1];
+                                final String[] ID = new String[1];
+                                final String[] department = new String[1];
+                                mFirestore.collection("Users").document(current_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        position[0] = (String) documentSnapshot.get("position");
+                                        faculty[0] = (String) documentSnapshot.get("faculty");
+                                        ID[0] = (String) documentSnapshot.get("ID");
+                                        department[0] = (String) documentSnapshot.get("department");
+
+                                        if (position[0].equals("head")) {
+                                            db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").push().setValue(notification);
+                                                    usersList.remove(position);
+                                                    notifyDataSetChanged();
+                                                }
+                                            });
+
+                                        } else {
+                                            db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").push().setValue(notification);
+                                                    usersList.remove(position);
+                                                    notifyDataSetChanged();
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 

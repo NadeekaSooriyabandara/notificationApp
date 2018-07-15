@@ -60,7 +60,7 @@ public class UsersFragment extends Fragment {
         mUsersListView = view.findViewById(R.id.users_list);
 
         usersList = new ArrayList<>();
-        usersRecyclerAdapter = new UsersRecyclerAdapter(container.getContext(), usersList, mdb);
+        usersRecyclerAdapter = new UsersRecyclerAdapter(container.getContext(), usersList, mdb, mAuth, mFirestore);
 
         mUsersListView.setHasFixedSize(true);
         mUsersListView.setLayoutManager(new LinearLayoutManager(container.getContext()));
@@ -112,6 +112,7 @@ public class UsersFragment extends Fragment {
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+                                    usersList.clear();
                                     for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                                         //String name = (String) messageSnapshot.child("name").getValue();
                                         //String message = (String) messageSnapshot.child("message").getValue();
@@ -134,6 +135,7 @@ public class UsersFragment extends Fragment {
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+                                    usersList.clear();
                                     for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                                         //String name = (String) messageSnapshot.child("name").getValue();
                                         //String message = (String) messageSnapshot.child("message").getValue();
