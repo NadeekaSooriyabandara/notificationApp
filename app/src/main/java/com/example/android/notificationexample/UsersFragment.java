@@ -131,7 +131,7 @@ public class UsersFragment extends Fragment {
                                 }
                             });
                 } else {
-                    mdb.child("faculty").child(faculty[0]).child("notifications").orderByChild("respond").equalTo("false")
+                    mdb.child("faculty").child(faculty[0]).child("head").child("notifications").orderByChild("respond").equalTo("false")
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {

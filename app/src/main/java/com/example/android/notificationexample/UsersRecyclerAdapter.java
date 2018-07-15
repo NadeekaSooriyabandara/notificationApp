@@ -76,8 +76,9 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String indexNo = (String) dataSnapshot.getValue();
 
-                        DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
+                        final DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
                         final Map notification = new HashMap<>();
+                        final Map notificationtodean = new HashMap<>();
 
                         notification.put("fromuserid", usersList.get(position).getName());
                         notification.put("message", message);
@@ -88,8 +89,55 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                         notification.put("passengers", usersList.get(position).getPassengers());
                         notification.put("status", "confirmed");
 
+                        notificationtodean.put("fromuserid", usersList.get(position).getName());
+                        notificationtodean.put("message", message);
+                        notificationtodean.put("date", date);
+                        notificationtodean.put("stime", usersList.get(position).getStime());
+                        notificationtodean.put("etime", usersList.get(position).getEtime());
+                        notificationtodean.put("respond", "false");
+                        notificationtodean.put("passengers", usersList.get(position).getPassengers());
 
-                        ref.push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        String current_id = mAuth.getCurrentUser().getUid();
+                        final String[] position = new String[1];
+                        final String[] faculty = new String[1];
+                        final String[] ID = new String[1];
+                        final String[] department = new String[1];
+                        mFirestore.collection("Users").document(current_id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                position[0] = (String) documentSnapshot.get("position");
+                                faculty[0] = (String) documentSnapshot.get("faculty");
+                                ID[0] = (String) documentSnapshot.get("ID");
+                                department[0] = (String) documentSnapshot.get("department");
+
+                                if (position[0].equals("head")) {
+                                    db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").push().setValue(notification);
+
+                                            db.child("faculty").child(faculty[0]).child("head").child("notifications").push().setValue(notificationtodean);
+                                            usersList.remove(position);
+                                            notifyDataSetChanged();
+                                        }
+                                    });
+
+                                } else {
+                                    db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").push().setValue(notification);
+                                            ref.push().setValue(notification);
+                                            usersList.remove(position);
+                                            notifyDataSetChanged();
+                                        }
+                                    });
+                                }
+
+                            }
+                        });
+
+                        /*ref.push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 String current_id = mAuth.getCurrentUser().getUid();
@@ -129,7 +177,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                     }
                                 });
                             }
-                        });
+                        });*/
                     }
 
                     @Override

@@ -137,7 +137,7 @@ public class ProfileFragment extends Fragment {
                             });
 
                         } else {
-                            mdb.child("faculty").child(faculty[0]).child("token").setValue("").addOnSuccessListener(new OnSuccessListener<Void>() {
+                            mdb.child("faculty").child(faculty[0]).child("head").child("token").setValue("").addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     mAuth.signOut();
