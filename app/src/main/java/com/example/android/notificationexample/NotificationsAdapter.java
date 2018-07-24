@@ -46,10 +46,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
         String from_id = mNotifList.get(position).getFrom();
 
-        holder.mNotifMessage.setText(mNotifList.get(position).getMessage());
-        holder.mNotifName.setText(mNotifList.get(position).getFrom());
+        holder.mNotifVehicle.setText("Vehicle: " + mNotifList.get(position).getVehicle());
+        holder.mNotifName.setText("Name: " + mNotifList.get(position).getName() + "(" + mNotifList.get(position).getDepartment() + ")");
         holder.mNotifStatus.setText(mNotifList.get(position).getStatus());
-        holder.mNotifDate.setText(mNotifList.get(position).getDate());
+        holder.mNotifStartDate.setText("From: " + mNotifList.get(position).getSdate() + " " + mNotifList.get(position).getStime());
+        holder.mNotifStartDate.setText("To: " + mNotifList.get(position).getEdate() + " " + mNotifList.get(position).getEtime());
+        holder.mNotifPassenger.setText("No of Passengers: " + mNotifList.get(position).getPassengers());
+        holder.mNotifReason.setText("Reason: " + mNotifList.get(position).getMessage());
         if (mNotifList.get(position).getStatus().equals("rejected")) {
             holder.mNotifStatus.setTextColor(Color.RED);
         } else {
@@ -82,18 +85,20 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         private View mView;
-        private CircleImageView mNotifImage;
-        private TextView mNotifName, mNotifMessage, mNotifDate, mNotifStatus;
+        private TextView mNotifName, mNotifReason, mNotifStartDate, mNotifEndDate, mNotifStatus,
+                mNotifPassenger, mNotifVehicle;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
-            mNotifImage = mView.findViewById(R.id.notif_list_image);
             mNotifName = mView.findViewById(R.id.notif_list_name);
-            mNotifDate = mView.findViewById(R.id.notif_list_date);
-            mNotifMessage = mView.findViewById(R.id.notif_list_reason);
+            mNotifStartDate = mView.findViewById(R.id.notif_list_start_date);
+            mNotifEndDate = mView.findViewById(R.id.notif_list_end_date);
+            mNotifReason = mView.findViewById(R.id.notif_list_reason);
+            mNotifVehicle = mView.findViewById(R.id.notif_list_vehicles);
             mNotifStatus = mView.findViewById(R.id.notif_list_status);
+            mNotifPassenger = mView.findViewById(R.id.notif_list_passengers);
 
         }
     }

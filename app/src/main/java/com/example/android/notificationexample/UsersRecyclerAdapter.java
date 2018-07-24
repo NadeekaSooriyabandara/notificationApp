@@ -57,15 +57,18 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         //CircleImageView user_image_view = holder.user_image_view;
         //Glide.with(context).load(usersList.get(position).getImage()).into(user_image_view);
 
-        final String user_id = usersList.get(position).getName();
+        final String user_id = usersList.get(position).getFromuserid();
         String user_name = usersList.get(position).getName();
-        final String message = usersList.get(position).getImage();
+        final String message = usersList.get(position).getMessage();
         final String date = usersList.get(position).getDate();
         final String key = usersList.get(position).userId;
 
-        holder.user_name_view.setText(user_name);
+        holder.user_name_view.setText("Name: " + user_name + "(" + usersList.get(position).getDepartment() +")");
+        holder.vehicles_view.setText("Vehicle: " + usersList.get(position).getVehicle());
+        holder.start_date_view.setText("From: " + usersList.get(position).getSdate() + " " + usersList.get(position).getStime());
+        holder.end_date_view.setText("To: " + usersList.get(position).getEdate() + " " + usersList.get(position).getEtime());
+        holder.passenger_view.setText("No of Passengers: " + usersList.get(position).getPassengers());
         holder.reason_view.setText(message);
-        holder.date_view.setText(date);
 
         holder.confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +83,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                         final Map notification = new HashMap<>();
                         final Map notificationtodean = new HashMap<>();
 
-                        notification.put("fromuserid", usersList.get(position).getName());
+                        notification.put("fromuserid", usersList.get(position).getFromuserid());
                         notification.put("message", message);
                         notification.put("date", date);
                         notification.put("stime", usersList.get(position).getStime());
@@ -88,14 +91,30 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                         notification.put("respond", "true");
                         notification.put("passengers", usersList.get(position).getPassengers());
                         notification.put("status", "confirmed");
+                        notification.put("name", usersList.get(position).getName());
+                        notification.put("faculty", usersList.get(position).getFaculty());
+                        notification.put("department", usersList.get(position).getDepartment());
+                        notification.put("indexNo", usersList.get(position).getIndexNo());
+                        notification.put("vehicle", usersList.get(position).getVehicle());
+                        notification.put("vehicleNo", usersList.get(position).getVehicleNo());
+                        notification.put("sdate", usersList.get(position).getSdate());
+                        notification.put("edate", usersList.get(position).getEdate());
 
-                        notificationtodean.put("fromuserid", usersList.get(position).getName());
+                        notificationtodean.put("fromuserid", usersList.get(position).getFromuserid());
                         notificationtodean.put("message", message);
                         notificationtodean.put("date", date);
                         notificationtodean.put("stime", usersList.get(position).getStime());
                         notificationtodean.put("etime", usersList.get(position).getEtime());
                         notificationtodean.put("respond", "false");
                         notificationtodean.put("passengers", usersList.get(position).getPassengers());
+                        notificationtodean.put("name", usersList.get(position).getName());
+                        notificationtodean.put("faculty", usersList.get(position).getFaculty());
+                        notificationtodean.put("department", usersList.get(position).getDepartment());
+                        notificationtodean.put("indexNo", usersList.get(position).getIndexNo());
+                        notificationtodean.put("vehicle", usersList.get(position).getVehicle());
+                        notificationtodean.put("vehicleNo", usersList.get(position).getVehicleNo());
+                        notificationtodean.put("sdate", usersList.get(position).getSdate());
+                        notificationtodean.put("edate", usersList.get(position).getEdate());
 
                         String current_id = mAuth.getCurrentUser().getUid();
                         final String[] position = new String[1];
@@ -114,9 +133,9 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                     db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").push().setValue(notification);
+                                            db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").child(key).updateChildren(notification);
 
-                                            db.child("faculty").child(faculty[0]).child("head").child("notifications").push().setValue(notificationtodean);
+                                            db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).updateChildren(notificationtodean);
                                             usersList.remove(position);
                                             notifyDataSetChanged();
                                         }
@@ -126,8 +145,8 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                     db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").push().setValue(notification);
-                                            ref.push().setValue(notification);
+                                            db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").child(key).updateChildren(notification);
+                                            ref.child(key).updateChildren(notification);
                                             usersList.remove(position);
                                             notifyDataSetChanged();
                                         }
@@ -199,7 +218,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                         DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
                         final Map notification = new HashMap<>();
 
-                        notification.put("fromuserid", usersList.get(position).getName());
+                        notification.put("fromuserid", usersList.get(position).getFromuserid());
                         notification.put("message", message);
                         notification.put("date", date);
                         notification.put("stime", usersList.get(position).getStime());
@@ -207,9 +226,17 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                         notification.put("respond", "true");
                         notification.put("passengers", usersList.get(position).getPassengers());
                         notification.put("status", "rejected");
+                        notification.put("name", usersList.get(position).getName());
+                        notification.put("faculty", usersList.get(position).getFaculty());
+                        notification.put("department", usersList.get(position).getDepartment());
+                        notification.put("indexNo", usersList.get(position).getIndexNo());
+                        notification.put("vehicle", usersList.get(position).getVehicle());
+                        notification.put("vehicleNo", usersList.get(position).getVehicleNo());
+                        notification.put("sdate", usersList.get(position).getSdate());
+                        notification.put("edate", usersList.get(position).getEdate());
 
 
-                        ref.push().setValue(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        ref.child(key).updateChildren(notification).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 String current_id = mAuth.getCurrentUser().getUid();
@@ -229,7 +256,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                             db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").push().setValue(notification);
+                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").child(key).updateChildren(notification);
                                                     usersList.remove(position);
                                                     notifyDataSetChanged();
                                                 }
@@ -239,7 +266,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                             db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").push().setValue(notification);
+                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").child(key).updateChildren(notification);
                                                     usersList.remove(position);
                                                     notifyDataSetChanged();
                                                 }
@@ -281,18 +308,19 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
 
         private View mView;
         private CircleImageView user_image_view;
-        private TextView user_name_view, vehicles_view, date_view, reason_view;
+        private TextView user_name_view, vehicles_view, start_date_view, end_date_view, reason_view, passenger_view;
         private Button confirm_btn, reject_btn;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
-            user_image_view = mView.findViewById(R.id.user_list_image);
             user_name_view = mView.findViewById(R.id.user_list_name);
             vehicles_view = mView.findViewById(R.id.user_list_vehicles);
-            date_view = mView.findViewById(R.id.user_list_date);
+            start_date_view = mView.findViewById(R.id.user_list_start_date);
+            end_date_view = mView.findViewById(R.id.user_list_end_date);
             reason_view = mView.findViewById(R.id.user_list_reason);
+            passenger_view = mView.findViewById(R.id.user_list_passengers);
             confirm_btn = mView.findViewById(R.id.user_list_confirm_btn);
             reject_btn = mView.findViewById(R.id.user_list_reject_btn);
 

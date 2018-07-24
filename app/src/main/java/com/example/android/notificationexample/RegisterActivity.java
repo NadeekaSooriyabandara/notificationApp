@@ -112,43 +112,51 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
 
                                     final String user_id = mAuth.getCurrentUser().getUid();
-                                    StorageReference user_profile = mStorage.child(user_id + ".jpg");
+                                    final StorageReference user_profile = mStorage.child(user_id + ".jpg");
 
                                     user_profile.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> uploadTask) {
                                             if (uploadTask.isSuccessful()) {
 
-                                                final String download_url = uploadTask.getResult().getDownloadUrl().toString();
-
-
-
-                                                String token_id = FirebaseInstanceId.getInstance().getToken();
-
-                                                Map<String, Object> userMap = new HashMap<>();
-                                                userMap.put("name", name);
-                                                userMap.put("image", download_url);
-                                                userMap.put("token_id", token_id);
-                                                userMap.put("position", position);
-                                                userMap.put("faculty", faculty);
-                                                userMap.put("ID", ID);
-                                                if (position.equals("head")) {
-                                                    userMap.put("department", department);
-                                                }
-
-                                                mFireStore.collection("Users").document(user_id).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                //final String download_url = uploadTask.getResult().toString();
+                                                user_profile.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        mRegisterProgressBar.setVisibility(View.INVISIBLE);
-                                                        sendToMain();
-                                                     }
-                                                }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(getApplicationContext(), "Error : "+ e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                        mRegisterProgressBar.setVisibility(View.INVISIBLE);
+                                                    public void onSuccess(Uri uri) {
+                                                        String download_url = uri.toString();
+
+                                                        String token_id = FirebaseInstanceId.getInstance().getToken();
+
+                                                        Map<String, Object> userMap = new HashMap<>();
+                                                        userMap.put("name", name);
+                                                        userMap.put("image", download_url);
+                                                        userMap.put("token_id", token_id);
+                                                        userMap.put("position", position);
+                                                        userMap.put("faculty", faculty);
+                                                        userMap.put("ID", ID);
+                                                        if (position.equals("head")) {
+                                                            userMap.put("department", department);
+                                                        }
+
+                                                        mFireStore.collection("Users").document(user_id).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                mRegisterProgressBar.setVisibility(View.INVISIBLE);
+                                                                sendToMain();
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Toast.makeText(getApplicationContext(), "Error : "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                mRegisterProgressBar.setVisibility(View.INVISIBLE);
+                                                            }
+                                                        });
                                                     }
                                                 });
+
+
+
+
 
 
                                             } else {

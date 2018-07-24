@@ -8,4 +8,7 @@
     <color name="textTabBright">#ffffff</color>
 
     <color name="outline_gray">#cccccc</color>
+
+    <color name="accept_color">#27ae60</color>
+    <color name="reject_color">#c0392b</color>
 </resources>
