@@ -62,6 +62,11 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         final String message = usersList.get(position).getMessage();
         final String date = usersList.get(position).getDate();
         final String key = usersList.get(position).userId;
+        final String vehicleNo = usersList.get(position).getVehicleNo();
+        String sd = usersList.get(position).getSdate();
+        String ed = usersList.get(position).getEdate();
+        final String startd = sd.substring(0, 2) + sd.substring(3, 5) + sd.substring(6);
+        final String endd = ed.substring(0, 2) + ed.substring(3, 5) + ed.substring(6);
 
         holder.user_name_view.setText("Name: " + user_name + "(" + usersList.get(position).getDepartment() +")");
         holder.vehicles_view.setText("Vehicle: " + usersList.get(position).getVehicle());
@@ -146,9 +151,14 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").child(key).updateChildren(notification);
-                                            ref.child(key).updateChildren(notification);
                                             usersList.remove(position);
                                             notifyDataSetChanged();
+                                            ref.child(key).updateChildren(notification).addOnSuccessListener(new OnSuccessListener() {
+                                                @Override
+                                                public void onSuccess(Object o) {
+                                                    db.child("Vehicles").child(vehicleNo).child("bookdates").child(startd).setValue(endd);
+                                                }
+                                            });
                                         }
                                     });
                                 }
