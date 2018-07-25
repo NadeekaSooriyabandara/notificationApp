@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -82,7 +83,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                 db.child("UserIdentities").child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String indexNo = (String) dataSnapshot.getValue();
+                        final String indexNo = (String) dataSnapshot.getValue();
 
                         final DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
                         final Map notification = new HashMap<>();
@@ -156,7 +157,14 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                             ref.child(key).updateChildren(notification).addOnSuccessListener(new OnSuccessListener() {
                                                 @Override
                                                 public void onSuccess(Object o) {
-                                                    db.child("Vehicles").child(vehicleNo).child("bookdates").child(startd).setValue(endd);
+                                                    db.child("Vehicles").child(vehicleNo).child("bookdates").child(startd).setValue(endd).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            DatabaseReference dd = FirebaseDatabase.getInstance().getReference();
+                                                            dd.child("Users").child(indexNo).child("pendingnotifications").child(key).removeValue();
+                                                        }
+                                                    });
+
                                                 }
                                             });
                                         }
@@ -223,7 +231,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                 db.child("UserIdentities").child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String indexNo = (String) dataSnapshot.getValue();
+                        final String indexNo = (String) dataSnapshot.getValue();
 
                         DatabaseReference ref = db.child("Users").child(indexNo).child("notifications");
                         final Map notification = new HashMap<>();
@@ -266,9 +274,16 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                             db.child("faculty").child(faculty[0]).child(department[0]).child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").child(key).updateChildren(notification);
                                                     usersList.remove(position);
                                                     notifyDataSetChanged();
+                                                    db.child("faculty").child(faculty[0]).child(department[0]).child("respondnotifications").child(key).updateChildren(notification).addOnSuccessListener(new OnSuccessListener() {
+                                                        @Override
+                                                        public void onSuccess(Object o) {
+                                                            DatabaseReference dd = FirebaseDatabase.getInstance().getReference();
+                                                            dd.child("Users").child(indexNo).child("pendingnotifications").child(key).removeValue();
+                                                        }
+                                                    });
+
                                                 }
                                             });
 
@@ -276,9 +291,15 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
                                             db.child("faculty").child(faculty[0]).child("head").child("notifications").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").child(key).updateChildren(notification);
                                                     usersList.remove(position);
                                                     notifyDataSetChanged();
+                                                    db.child("faculty").child(faculty[0]).child("head").child("respondnotifications").child(key).updateChildren(notification).addOnSuccessListener(new OnSuccessListener() {
+                                                        @Override
+                                                        public void onSuccess(Object o) {
+                                                            DatabaseReference dd = FirebaseDatabase.getInstance().getReference();
+                                                            dd.child("Users").child(indexNo).child("pendingnotifications").child(key).removeValue();
+                                                        }
+                                                    });
                                                 }
                                             });
                                         }
