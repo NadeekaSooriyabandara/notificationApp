@@ -50,7 +50,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         holder.mNotifName.setText("Name: " + mNotifList.get(position).getName() + "(" + mNotifList.get(position).getDepartment() + ")");
         holder.mNotifStatus.setText(mNotifList.get(position).getStatus());
         holder.mNotifStartDate.setText("From: " + mNotifList.get(position).getSdate() + " " + mNotifList.get(position).getStime());
-        holder.mNotifStartDate.setText("To: " + mNotifList.get(position).getEdate() + " " + mNotifList.get(position).getEtime());
+        holder.mNotifEndDate.setText("To: " + mNotifList.get(position).getEdate() + " " + mNotifList.get(position).getEtime());
         holder.mNotifPassenger.setText("No of Passengers: " + mNotifList.get(position).getPassengers());
         holder.mNotifReason.setText("Reason: " + mNotifList.get(position).getMessage());
         if (mNotifList.get(position).getStatus().equals("rejected")) {
