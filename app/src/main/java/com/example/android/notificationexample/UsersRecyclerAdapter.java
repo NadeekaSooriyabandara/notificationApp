@@ -73,7 +73,7 @@ public class UsersRecyclerAdapter extends RecyclerView.Adapter<UsersRecyclerAdap
         holder.start_date_view.setText("From: " + usersList.get(position).getSdate() + " " + usersList.get(position).getStime());
         holder.end_date_view.setText("To: " + usersList.get(position).getEdate() + " " + usersList.get(position).getEtime());
         holder.passenger_view.setText("No of Passengers: " + usersList.get(position).getPassengers());
-        holder.reason_view.setText(message);
+        holder.reason_view.setText("Reason: " + message);
 
         holder.confirm_btn.setOnClickListener(new View.OnClickListener() {
             @Override
